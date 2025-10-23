@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>For You MyLove</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #071428;
+      --bg2: #153a6a;
+      --muted: #9fb6d0;
+      --accent: #6fb3ff;
+      --accent2: #b6d7ff;
+      --glass: rgba(255,255,255,0.04);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Roboto;color:#eaf6ff;background:linear-gradient(180deg,var(--bg1),var(--bg2));-webkit-font-smoothing:antialiased}
+    /* layout */
+    .wrap{max-width:420px;margin:18px auto;padding:18px}
+    .center{display:flex;flex-direction:column;align-items:center;gap:12px}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+
+    /* PIN screen */
+    .pin-screen{width:100%;max-width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:16px;box-shadow:0 12px 40px rgba(0,8,25,0.6)}
+    .pin-circles{display:flex;gap:12px;justify-content:center;margin:18px 0}
+    .circle{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:#012;font-weight:700}
+    .circle.filled{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#012}
+    .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:8px}
+    .key{padding:14px;border-radius:12px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);font-weight:700;font-size:18px;color:var(--muted);cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center}
+    .key:active{transform:scale(.98)}
+    .key.wide{grid-column:span3}
+    .controls{display:flex;gap:8px;justify-content:center;margin-top:10px}
+
+    /* main romantic page */
+    .main-page{display:none;margin-top:18px}
+    .main-page.show{display:block}
+    .hero{display:flex;gap:16px;align-items:center}
+    .avatar{width:140px;height:140px;border-radius:12px;overflow:hidden;border:4px solid rgba(255,255,255,0.04);background:#000;display:flex;align-items:center;justify-content:center}
+    .avatar img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+    .avatar img.show{opacity:1}
+    .hero-info h2{margin:0}
+    .hero-info p{margin:6px 0 0 0;color:var(--muted)}
+
+    .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:10px 14px;border-radius:12px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#022}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+    /* typing effect box */
+    .message-box{margin-top:14px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);min-height:64px}
+    .typed{font-size:16px;color:#e9fbff;white-space:pre-wrap;word-wrap:break-word}
+
+    /* hearts floating */
+    .hearts{position:fixed;right:16px;bottom:16px;pointer-events:none;z-index:30}
+
+    /* small helpers */
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:22px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media(max-width:460px){
+      .wrap{padding:12px}
+      .avatar{width:110px;height:110px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="center">
+      <h1>Tentang Kita 💙</h1>
+    </div>
+
+    <!-- PIN screen -->
+    <div class="pin-screen" id="pinScreen" aria-live="polite">
+      <div class="center">
+        <div style="text-align:center">
+          <div style="font-weight:700">Masukkan Kode Rahasia</div>
+
+        </div>
+
+        <div class="pin-circles" id="pinCircles" aria-hidden="true">
+          <!-- circles will be injected -->
+        </div>
+
+        <div class="keypad" id="keypad" aria-label="Keypad">
+          <!-- keys injected by JS -->
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-ghost" id="btnBack">Hapus</button>
+          <button class="btn btn-ghost" id="btnClear">Reset</button>
+        </div>
+
+        <div id="pinHint" class="small" style="margin-top:10px;color:var(--muted)"></div>
+      </div>
+    </div>
+
+    <!-- Main romantic content -->
+    <div class="main-page" id="mainPage" role="main">
+      <div class="hero card" style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px">
+        <div class="avatar" aria-hidden="true">
+          <!-- Replace "myphoto.jpg" with your photo file -->
+          <img id="myPhoto" src="poto riska.jpg" alt="Foto kamu">
+        </div>
+        <div class="hero-info">
+          <h2 id="greeting">Hai sayangku 💙</h2>
+          <p id="subtitle" class="small">Bahagia Selalu yaa, inget cintanya jangan dikurangin ya</p>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="btnKangen">Kamu kangen aku gak?</button>
+            <button class="btn btn-ghost" id="btnPesan">Baca pesan buat kamu</button>
+            <button class="btn btn-ghost" id="btnStopMusic">Stop Musik</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="message-box">
+        <div class="typed" id="typedMessage" aria-live="polite"></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center">
+        <div class="small">Musik: </div>
+        <div class="small" id="musicLabel">Dimainkan jika Anda tekan Play</div>
+        <button class="btn btn-ghost" id="btnPlayMusic">Play Musik</button>
+      </div>
+    </div>
+
+    <div class="hearts" id="hearts"></div>
+
+    <footer> Semoga Cepat Bertemu yaa</footer>
+  </div>
+
+  <!-- hidden audio -->
+  <audio id="bgAudio" src="Bandaneira .mp3" loop preload="auto"></audio>
+
+  <script>
+    /**********************************************
+     * LDR PIN page
+     * - CHANGE SECRET_PIN to your jadian date string
+     * - Replace myphoto.jpg and music.mp3 with your files
+     **********************************************/
+    const SECRET_PIN = '01042025'; // <-- ganti di sini dengan tanggal jadian kamu (format angka, contoh: 22082023)
+    // PIN length will be SECRET_PIN.length for circle indicators:
+    const PIN_LENGTH = SECRET_PIN.length;
+
+    // DOM refs
+    const pinCircles = document.getElementById('pinCircles');
+    const keypad = document.getElementById('keypad');
+    const pinHint = document.getElementById('pinHint');
+    const btnBack = document.getElementById('btnBack');
+    const btnClear = document.getElementById('btnClear');
+
+    const pinScreen = document.getElementById('pinScreen');
+    const mainPage = document.getElementById('mainPage');
+
+    const myPhoto = document.getElementById('myPhoto');
+    const btnKangen = document.getElementById('btnKangen');
+    const btnPesan = document.getElementById('btnPesan');
+    const typedMessage = document.getElementById('typedMessage');
+
+    const bgAudio = document.getElementById('bgAudio');
+    const btnPlayMusic = document.getElementById('btnPlayMusic');
+    const btnStopMusic = document.getElementById('btnStopMusic');
+    const musicLabel = document.getElementById('musicLabel');
+
+    const hearts = document.getElementById('hearts');
+
+    // internal state
+    let entered = '';
+
+    // init circles
+    function renderCircles(){
+      pinCircles.innerHTML = '';
+      for(let i=0;i<PIN_LENGTH;i++){
+        const c = document.createElement('div');
+        c.className = 'circle' + (i < entered.length ? ' filled' : '');
+        pinCircles.appendChild(c);
+      }
+    }
+
+    // init keypad
+    function renderKeypad(){
+      // numbers 1..9, 0 centered bottom
+      const keys = ['1','2','3','4','5','6','7','8','9','0'];
+      keypad.innerHTML = '';
+      // make grid as 3x4 but we have 10 keys; we'll add blank spaces
+      const layout = ['1','2','3','4','5','6','7','8','9','clear','0','back'];
+      layout.forEach(k=>{
+        const btn = document.createElement('div');
+        btn.className = 'key';
+        if(k === 'clear'){ btn.textContent = 'C'; btn.addEventListener('click', onClear); }
+        else if(k === 'back'){ btn.textContent = '⌫'; btn.addEventListener('click', onBack); }
+        else { btn.textContent = k; btn.addEventListener('click', ()=>onDigit(k)); }
+        keypad.appendChild(btn);
+      });
+    }
+
+    function onDigit(d){
+      if(entered.length >= PIN_LENGTH) return;
+      entered += d;
+      renderCircles();
+      checkPin();
+    }
+    function onBack(){
+      if(entered.length === 0) return;
+      entered = entered.slice(0,-1);
+      renderCircles();
+    }
+    function onClear(){
+      entered = '';
+      renderCircles();
+    }
+
+    btnBack.addEventListener('click', onBack);
+    btnClear.addEventListener('click', onClear);
+
+    function checkPin(){
+      pinHint.textContent = '';
+      if(entered.length === PIN_LENGTH){
+        // small delay so user sees filled circles
+        setTimeout(()=>{
+          if(entered === SECRET_PIN){
+            unlock();
+          } else {
+            // wrong
+            pinHint.textContent = 'Kode salah. Coba lagi ya sayang.';
+            shakeKeypad();
+            entered = '';
+            renderCircles();
+          }
+        }, 250);
+      }
+    }
+
+    function shakeKeypad(){
+      pinScreen.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:400});
+    }
+
+    // unlock to main page
+    function unlock(){
+      // hide pin screen, show main content
+      pinScreen.style.display = 'none';
+      mainPage.classList.add('show');
+      // autoplay music attempt (may be blocked)
+      try { bgAudio.play().then(()=>musicLabel.textContent='Playing').catch(()=>musicLabel.textContent='Tap Play untuk musik'); } catch(e){ musicLabel.textContent='Tap Play untuk musik'; }
+      // little heart burst
+      makeHearts(8);
+    }
+
+    // hearts animation util
+    function makeHearts(n=6){
+      for(let i=0;i<n;i++){
+        const el = document.createElement('span');
+        el.style.display='inline-block';
+        el.style.width='16px';
+        el.style.height='16px';
+        el.style.margin='6px';
+        el.innerHTML = `<svg viewBox="0 0 32 29.6"><path d="M23.6 0c-2.9 0-5.4 1.6-7.6 4-2.2-2.4-4.7-4-7.6-4C3.3 0 .5 2.8.5 6.2c0 6.9 9.7 11.8 15.5 17.1.7.6 1.8.6 2.5 0 5.8-5.3 15.5-10.2 15.5-17.1C31.5 2.8 28.7 0 23.6 0z" fill="#ffd7e0"/></svg>`;
+        hearts.appendChild(el);
+        animateHeart(el);
+        setTimeout(()=>el.remove(),1900);
+      }
+    }
+    function animateHeart(el){
+      const dx = (Math.random()*140)-70;
+      const dy = - (120 + Math.random()*160);
+      el.animate([
+        {transform:'translateY(0) scale(.6)', opacity:0},
+        {transform:`translate(${dx}px, ${dy}px) scale(1)`, opacity:1},
+        {transform:`translate(${dx*1.3}px, ${dy-30}px) scale(.8)`, opacity:0}
+      ],{duration:1800,easing:'cubic-bezier(.2,-0.2,.2,1)'});
+    }
+
+    // typing effect for the message
+    const MESSAGE_TEXT = 'Tetap bahagia dan tetap sayang aku yaa, Jangan lupa jaga kesehatan juga, Semangat Kerjanya 💙😊  target mahar juga jangan lupa. Jangan khawatir, cinta aku ga bakalan berkurang kok. Sabar yaa Bantar lagi juga Ketemuu 💙😊';
+    function typeMessage(){
+      typedMessage.textContent = '' ;
+      let i=0;
+      const speed = 40; // ms per char
+      const timer = setInterval(()=>{
+        typedMessage.textContent += MESSAGE_TEXT[i];
+        i++;
+        if(i >= MESSAGE_TEXT.length){ clearInterval(timer); }
+      }, speed);
+    }
+
+    // photo fade-in when clicking "Kamu kangen aku gak?"
+    btnKangen.addEventListener('click', ()=>{
+      // fade-in
+      myPhoto.classList.add('show');
+      // small heart burst
+      makeHearts(10);
+      // store view timestamp maybe
+      const views = JSON.parse(localStorage.getItem('photo_views')||'[]');
+      views.push({at:new Date().toISOString()});
+      localStorage.setItem('photo_views', JSON.stringify(views));
+    });
+
+    // message button
+    btnPesan.addEventListener('click', ()=>{
+      typedMessage.textContent = '';
+      typeMessage();
+      makeHearts(6);
+    });
+
+    // music controls
+    btnPlayMusic.addEventListener('click', ()=>{
+      bgAudio.play().then(()=> musicLabel.textContent='Playing').catch(()=> musicLabel.textContent='Tap to play (browser blocked autoplay)');
+    });
+    btnStopMusic.addEventListener('click', ()=>{
+      bgAudio.pause(); musicLabel.textContent='Paused';
+    });
+
+    // keyboard support (numbers)
+    document.addEventListener('keydown', (e)=>{
+      if(pinScreen.style.display === 'none') return;
+      if(e.key >= '0' && e.key <= '9'){ onDigit(e.key); }
+      else if(e.key === 'Backspace'){ onBack(); }
+      else if(e.key === 'Escape'){ onClear(); }
+    });
+
+    // initialize
+    (function init(){
+      renderCircles();
+      renderKeypad();
+
+      // try to preload the photo and hide until clicked
+      myPhoto.addEventListener('load', ()=>{ /* ready */ });
+      myPhoto.addEventListener('error', ()=>{ myPhoto.src = 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder'; });
+
+      // if user previously unlocked on this device, allow quick open
+      const unlocked = localStorage.getItem('ldr_unlocked_'+SECRET_PIN);
+      if(unlocked === '1'){
+        // show a small button to open directly
+        pinHint.innerHTML = 'Kamu sudah unlock sebelumnya di perangkat ini. <button id="openNow" class="btn btn-ghost" style="margin-top:6px">Buka Sekarang</button>';
+        document.getElementById('openNow').addEventListener('click', ()=> {
+          unlock();
+        });
+      }
+
+      // when unlocking, mark for this device
+      const origUnlock = unlock;
+      unlock = function(){
+        localStorage.setItem('ldr_unlocked_'+SECRET_PIN, '1');
+        origUnlock();
+      };
+    })();
+  </script>
+</body>
+</html>
